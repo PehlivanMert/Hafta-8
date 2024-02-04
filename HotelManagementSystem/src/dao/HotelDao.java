@@ -159,5 +159,37 @@ public class HotelDao {
         }
         return obj;
     }
+    public String getByName(int id) {
+        String hotelName = null;
+        String query = "SELECT hotel_name FROM public.hotel WHERE hotel_id = ?";
+        try {
+            PreparedStatement pr = this.conn.prepareStatement(query);
+            pr.setInt(1, id);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                hotelName = rs.getString("hotel_name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return hotelName;
+    }
+
+    public int getByHotelId(String hotelName) {
+        int hotelId = 0;
+        String query = "SELECT hotel_id FROM public.hotel WHERE hotel_name = ?";
+        try {
+            PreparedStatement pr = this.conn.prepareStatement(query);
+            pr.setString(1, hotelName);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                hotelId = rs.getInt("hotel_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return hotelId;
+    }
+
 
 }

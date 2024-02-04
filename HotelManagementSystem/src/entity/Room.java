@@ -16,11 +16,12 @@ public class Room {
     private boolean konsol;
     private boolean kasa;
     private boolean projeksiyon;
+    private int hotel_id;
 
     public Room() {
     }
 
-    public Room(int room_id, String hotel_name, String pension_type, String room_type, int stock, double adult_price, double child_price, int bed_capacity, String mkare, boolean tv, boolean minibar, boolean konsol, boolean kasa, boolean projeksiyon) {
+    public Room(int room_id, String hotel_name, String pension_type, String room_type, int stock, double adult_price, double child_price, int bed_capacity, String mkare, boolean tv, boolean minibar, boolean konsol, boolean kasa, boolean projeksiyon,int hotel_id) {
         this.room_id = room_id;
         this.hotel_name = hotel_name;
         this.pension_type = pension_type;
@@ -35,6 +36,7 @@ public class Room {
         this.konsol = konsol;
         this.kasa = kasa;
         this.projeksiyon = projeksiyon;
+        this.hotel_id = hotel_id;
     }
 
     public int getRoom_id() {
@@ -147,6 +149,14 @@ public class Room {
 
     public void setProjeksiyon(boolean projeksiyon) {
         this.projeksiyon = projeksiyon;
+    }
+
+    public int getHotel_id() {
+        return hotel_id;
+    }
+
+    public void setHotel_id(int hotel_id) {
+        this.hotel_id = hotel_id;
     }
 }
 

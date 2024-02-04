@@ -52,6 +52,12 @@ public class HotelManager {
     public Hotel getById(int id) {
         return this.hotelDao.getById(id);
     }
+    public String getByName(int id){
+        return this.hotelDao.getByName(id);
+    }
+    public int getByHotelId(String hotelName) {
+        return this.hotelDao.getByHotelId(hotelName);
+    }
 
     public boolean update(Hotel hotel) {
         if (this.getById(hotel.getId()) == null) {

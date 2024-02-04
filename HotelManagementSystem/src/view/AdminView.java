@@ -26,6 +26,7 @@ public class AdminView extends Layout {
     private JComboBox cmb_user_role;
     private JButton btn_user_save;
     private JLabel lbl_pass;
+    private JScrollPane scl_left;
     private User user;
     private UserManager userManager;
     private DefaultTableModel tmdl_user = new DefaultTableModel();

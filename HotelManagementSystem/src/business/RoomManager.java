@@ -2,9 +2,12 @@ package business;
 
 import core.Helper;
 import dao.RoomDao;
+import entity.Hotel;
 import entity.Room;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class RoomManager {
     private final RoomDao roomDao;
@@ -34,6 +37,7 @@ public class RoomManager {
             rowObject[i++] = obj.isKonsol();
             rowObject[i++] = obj.isKasa();
             rowObject[i++] = obj.isProjeksiyon();
+            rowObject[i++] = obj.getHotel_id();
 
 
             roomObjList.add(rowObject);
@@ -70,6 +74,43 @@ public class RoomManager {
         }
         return this.roomDao.delete(id);
     }
+
+    public ArrayList<Room> searchForTable(String hotelName, String city, String checkIn, String checkOut, String adult, String child) {
+        int adultCount = Integer.parseInt(adult);
+        int childCount = Integer.parseInt(child);
+        String select = "SELECT DISTINCT room.*\n" +
+                "FROM room\n" +
+                "JOIN season ON room.hotel_id = season.hotel_id\n" +
+                "JOIN pension ON room.hotel_id = pension.hotel_id\n" +
+                "JOIN hotel ON room.hotel_id = hotel.hotel_id";
+
+        ArrayList<String> whereList = new ArrayList<>();
+
+        if (hotelName != null && !hotelName.isEmpty()) {
+            whereList.add("hotel.hotel_name ILIKE '" + hotelName + "%'");
+        }
+
+        if (city != null && !city.isEmpty()) {
+            whereList.add("hotel.hotel_address ILIKE '" + city + "%'");
+        }
+
+        if (checkIn != null && !checkIn.isEmpty() && checkOut != null && !checkOut.isEmpty()) {
+            whereList.add("season.baslangic BETWEEN '" + checkIn + "' AND '" + checkOut + "'");
+        }
+        int totalCount = adultCount + childCount;
+        if (totalCount != 0) {
+            whereList.add("room.bed_capacity >=" + (totalCount));
+        }
+
+        String whereStr = String.join(" AND ", whereList);
+        String query = select;
+        if (whereStr.length() > 0) {
+            query += " WHERE " + whereStr;
+        }
+        return this.roomDao.selectByQuery(query);
+
+    }
+
 
 }
 

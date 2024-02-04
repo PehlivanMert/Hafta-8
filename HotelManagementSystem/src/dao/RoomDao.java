@@ -44,6 +44,7 @@ public class RoomDao {
         obj.setKonsol(rs.getBoolean("konsol"));
         obj.setKasa(rs.getBoolean("kasa"));
         obj.setProjeksiyon(rs.getBoolean("projeksiyon"));
+        obj.setHotel_id(rs.getInt("hotel_id"));
 
 
         return obj;
@@ -65,9 +66,10 @@ public class RoomDao {
                 "minibar," +
                 "konsol," +
                 "kasa," +
-                "projeksiyon" +
+                "projeksiyon," +
+                "hotel_id" +
                 ")" +
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 
         try {
@@ -85,6 +87,7 @@ public class RoomDao {
             pr.setBoolean(11, room.isKonsol());
             pr.setBoolean(12, room.isKasa());
             pr.setBoolean(13, room.isProjeksiyon());
+            pr.setInt(14, room.getHotel_id());
 
             return pr.executeUpdate() != -1;
         } catch (SQLException e) {
@@ -107,7 +110,8 @@ public class RoomDao {
                 "minibar = ? , " +
                 "konsol = ? , " +
                 "kasa = ? , " +
-                "projeksiyon = ?  " +
+                "projeksiyon = ?,  " +
+                "hotel_id = ?  " +
                 "WHERE room_id = ?";
 
 
@@ -127,8 +131,9 @@ public class RoomDao {
             pr.setBoolean(11, room.isKonsol());
             pr.setBoolean(12, room.isKasa());
             pr.setBoolean(13, room.isProjeksiyon());
+            pr.setInt(14, room.getHotel_id());
 
-            pr.setInt(14, room.getRoom_id());
+            pr.setInt(15, room.getRoom_id());
             return pr.executeUpdate() != -1;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -162,6 +167,19 @@ public class RoomDao {
             e.printStackTrace();
         }
         return obj;
+    }
+
+    public ArrayList<Room> selectByQuery(String query) {
+        ArrayList<Room> roomList = new ArrayList<>();
+        try {
+            ResultSet rs = this.conn.createStatement().executeQuery(query);
+            while (rs.next()) {
+                roomList.add(this.match(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return roomList;
     }
 
 }

@@ -1,6 +1,4 @@
 package core;
-import com.formdev.flatlaf.intellijthemes.FlatArcDarkIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatArcOrangeIJTheme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +6,7 @@ import java.awt.*;
 
 public class Helper {
     public static void setTheme() {
+
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
             if ("Nimbus".equals(info.getName())) {
                 try {
