@@ -429,7 +429,9 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <enabled value="false"/>
+            </properties>
           </component>
           <component id="65920" class="javax.swing.JTextField" binding="fld_adultcount">
             <constraints>
@@ -438,6 +440,7 @@
               </grid>
             </constraints>
             <properties>
+              <enabled value="false"/>
               <text value=""/>
             </properties>
           </component>

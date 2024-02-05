@@ -5,6 +5,8 @@ import dao.RoomDao;
 import entity.Hotel;
 import entity.Room;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -94,8 +96,11 @@ public class RoomManager {
             whereList.add("hotel.hotel_address ILIKE '" + city + "%'");
         }
 
-        if (checkIn != null && !checkIn.isEmpty() && checkOut != null && !checkOut.isEmpty()) {
-            whereList.add("season.baslangic BETWEEN '" + checkIn + "' AND '" + checkOut + "'");
+        if (checkIn != null && !checkIn.isEmpty()) {
+            whereList.add("season.baslangic BETWEEN '" + checkIn + "' AND season.bitis");
+        }
+        if (checkOut != null && !checkOut.isEmpty()) {
+            whereList.add("season.baslangic BETWEEN '" + checkOut + "' AND season.bitis");
         }
         int totalCount = adultCount + childCount;
         if (totalCount != 0) {
@@ -107,8 +112,13 @@ public class RoomManager {
         if (whereStr.length() > 0) {
             query += " WHERE " + whereStr;
         }
+        System.out.println(query);
         return this.roomDao.selectByQuery(query);
 
+    }
+
+    public void updateStock(int roomId,int roomCount) {
+        this.roomDao.updateStock(roomId,roomCount);
     }
 
 }

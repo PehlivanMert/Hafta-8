@@ -47,7 +47,7 @@ public class SeasonDao {
                     "(" +
                     "hotel_id," +
                     "baslangic," +
-                    "bitis" +
+                    "bitis," +
                     "season_factor" +
                     ")" +
                     " VALUES (?, ?, ?, ?)";
@@ -70,7 +70,7 @@ public class SeasonDao {
             String query = "UPDATE public.season SET " +
                     "hotel_id = ? ," +
                     "baslangic = ? , " +
-                    "bitis = ?  " +
+                    "bitis = ?,  " +
                     "season_factor = ? " +
                     "WHERE season_id = ?";
 

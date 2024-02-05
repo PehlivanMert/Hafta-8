@@ -5,8 +5,6 @@ import core.Helper;
 import entity.Season;
 
 import javax.swing.*;
-import javax.swing.text.MaskFormatter;
-import java.text.ParseException;
 import java.time.LocalDate;
 
 public class SeasonView extends Layout {
@@ -19,6 +17,8 @@ public class SeasonView extends Layout {
     private JTextField fld_season_hotel_id;
     private JLabel lbl_season_hotel_id;
     private JButton btn_save;
+    private JTextField fld_season_factor;
+    private JLabel lbl_season_factor;
     private Season season;
     private SeasonManager seasonManager;
 
@@ -27,7 +27,7 @@ public class SeasonView extends Layout {
         this.season = season;
         this.seasonManager = new SeasonManager();
         this.add(contanier);
-        this.guiInitiliaze(300, 275);
+        this.guiInitiliaze(300, 400);
 
 
         if (this.season.getSeasonId() != 0) {
@@ -35,6 +35,7 @@ public class SeasonView extends Layout {
             this.fld_season_hotel_id.setText(String.valueOf(this.season.getHotelId()));
             this.fld_strt_day.setText(String.valueOf(this.season.getStrt_date()));
             this.fld_finish_date.setText(String.valueOf(this.season.getFnsh_date()));
+            this.fld_season_factor.setText(String.valueOf(this.season.getSeason_factor()));
         }
 
         this.btn_save.addActionListener(e -> {
@@ -46,6 +47,7 @@ public class SeasonView extends Layout {
                 this.season.setHotelId(Integer.parseInt(fld_season_hotel_id.getText()));
                 this.season.setStrt_date(LocalDate.parse(fld_strt_day.getText()));
                 this.season.setFnsh_date(LocalDate.parse(fld_finish_date.getText()));
+                this.season.setSeason_factor(Double.parseDouble(fld_season_factor.getText()));
 
 
                 if (this.season.getSeasonId() != 0) {

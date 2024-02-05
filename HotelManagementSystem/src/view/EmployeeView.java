@@ -134,7 +134,7 @@ public class EmployeeView extends Layout {
         //Rez
 
         loadReservationTable(null);
-        //loadRezComponent();
+        loadRezComponent();
 
 
         btn_logout.addActionListener(new ActionListener() {
@@ -209,7 +209,7 @@ public class EmployeeView extends Layout {
 
     public void loadSeasonTable() {
 
-        Object[] col_season = {"ID", "Otel ID", "Başlangıç Tarihi", "Bitiş Tarihi","Sezon Faktörü"};
+        Object[] col_season = {"ID", "Otel ID", "Başlangıç Tarihi", "Bitiş Tarihi", "Sezon Faktörü"};
         ArrayList<Object[]> seasonList = this.seasonManager.getForTable(col_season.length, this.seasonManager.findAll());
         this.createTable(this.tmdl_season, this.tbl_season, col_season, seasonList);
 
@@ -347,39 +347,47 @@ public class EmployeeView extends Layout {
     }
 
     public void loadRoomComponent() {
+
         tableSelectedRow(this.tbl_room);
 
         this.rez_menu = new JPopupMenu();
         this.rez_menu.add("Yeni Rezervasyon Yap").addActionListener(e -> {
+            if (!fld_room_checkin.getText().isEmpty() && !fld_room_checkout.getText().isEmpty()) {
+
             int selectrezId = this.getTableSelectedRow(this.tbl_room, 0);
             String giris = fld_room_checkin.getText();
             String cikis = fld_room_checkout.getText();
             int yetişkinSayisi = Integer.parseInt(fld_room_adult_count.getText());
             int cocukSayisi = Integer.parseInt(fld_room_child_count.getText());
 
-            ReservationView reservationView = new ReservationView(this.roomManager.getById(selectrezId), giris, cikis, yetişkinSayisi, cocukSayisi);
+            ReservationView reservationView = new ReservationView(new Reservation(0), this.roomManager.getById(selectrezId), giris, cikis, yetişkinSayisi, cocukSayisi);
             reservationView.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
                     loadReservationTable(null);
+                    loadRoomTable(null);
 
                 }
             });
+            }else {
+                Helper.showMsg("Lütfen Giriş ve Çıkış Tarihlerini Giriniz");
+            }
         });
         this.tbl_room.setComponentPopupMenu(rez_menu);
     }
 
-    /*public void loadRezComponent() {
+    public void loadRezComponent() {
         tableSelectedRow(this.tbl_rez);
 
         this.rez_menu2 = new JPopupMenu();
-        this.rez_menu2.add("Güncelle").addActionListener(e -> {
+        this.rez_menu2.add("Rezervasyon Güncelle").addActionListener(e -> {
             int selectrezId = this.getTableSelectedRow(this.tbl_rez, 0);
             ReservationView reservationView = new ReservationView(this.reservationManager.getById(selectrezId));
             reservationView.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
                     loadReservationTable(null);
+                    loadRoomTable(null);
 
                 }
             });
@@ -388,9 +396,12 @@ public class EmployeeView extends Layout {
         this.rez_menu2.add("Sil").addActionListener(e -> {
             if (Helper.confirm("sure")) {
                 int selectrezId = this.getTableSelectedRow(this.tbl_rez, 0);
+                int room_id = this.reservationManager.getById(selectrezId).getRoom_id();
                 if (this.reservationManager.delete(selectrezId)) {
                     Helper.showMsg("done");
+                    roomManager.updateStock(room_id, 1);
                     loadReservationTable(null);
+                    loadRoomTable(null);
 
                 } else {
                     Helper.showMsg("error");
@@ -399,7 +410,7 @@ public class EmployeeView extends Layout {
         });
         this.tbl_rez.setComponentPopupMenu(rez_menu2);
 
-    }*/
+    }
 }
 
 

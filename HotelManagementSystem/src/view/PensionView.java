@@ -14,6 +14,8 @@ public class PensionView extends Layout {
     private JLabel lbl_pension_type;
     private JLabel lbl_top;
     private JTextField fld_hotelid;
+    private JTextField fld_pension_factor;
+    private JLabel lbl_pansion_factor;
     private Pension pension;
     private PensionManager pensionManager;
 
@@ -22,13 +24,14 @@ public class PensionView extends Layout {
         this.pension = pension;
         this.pensionManager = new PensionManager();
         this.add(contanier);
-        this.guiInitiliaze(300, 250);
+        this.guiInitiliaze(300, 300);
 
 
         if (this.pension.getPensionId() != 0) {
 
             this.fld_hotelid.setText(String.valueOf(this.pension.getHotelId()));
             this.cmb_pension_type.setSelectedItem(this.pension.getPensionType());
+            this.fld_pension_factor.setText(String.valueOf(this.pension.getPensionFactor()));
 
         }
 
@@ -40,6 +43,7 @@ public class PensionView extends Layout {
 
                 this.pension.setHotelId(Integer.parseInt(fld_hotelid.getText()));
                 this.pension.setPensionType((String) cmb_pension_type.getSelectedItem());
+                this.pension.setPensionFactor(Double.parseDouble(fld_pension_factor.getText()));
 
 
                 if (this.pension.getPensionId() != 0) {
