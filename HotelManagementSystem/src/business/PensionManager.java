@@ -60,5 +60,9 @@ public class PensionManager {
         return this.pensionDao.delete(id);
     }
 
+    public ArrayList<String> getOteleAitPensionlar(int hotelId ){
+        return this.pensionDao.getOteleAitPensionlar(hotelId);
+    }
+
 }
 

@@ -310,17 +310,23 @@ public class EmployeeView extends Layout {
     }
 
     public void loadRoomTable(ArrayList<Object[]> roomList) {
-
         this.col_room = new Object[]{"ID", "Otel Adı", "Pansiyon Tipi", "Oda Tipi", "Stok", "Yetişkin Fiyatı", "Çocuk Fiyatı", "Yatak Sayısı", "Metrekare", "TV", "Minibar", "Konsol", "Kasa", "Projeksiyon", "Otel ID"};
+        // Stok kontrollü tablo oluşturma
         if (roomList == null || roomList.isEmpty()) {
-            // Boş bir roomList oluştur ve tabloyu güncelle
             roomList = new ArrayList<>();
             this.createTable(this.tmdl_room, this.tbl_room, col_room, roomList);
         } else {
-            // RoomList dolu ise, mevcut verilerle tabloyu oluştur
-            this.createTable(this.tmdl_room, this.tbl_room, col_room, roomList);
+            ArrayList<Object[]> filteredRoomList = new ArrayList<>();
+            for (Object[] room : roomList) {
+                int stock = (int) room[4];
+                if (stock > 0) {
+                    filteredRoomList.add(room);
+                }
+            }
+            this.createTable(this.tmdl_room, this.tbl_room, col_room, filteredRoomList);
         }
     }
+
 
     public void loadSearchTable() {
         ArrayList<Room> roomListBySearch = this.roomManager.searchForTable(
@@ -354,22 +360,22 @@ public class EmployeeView extends Layout {
         this.rez_menu.add("Yeni Rezervasyon Yap").addActionListener(e -> {
             if (!fld_room_checkin.getText().isEmpty() && !fld_room_checkout.getText().isEmpty()) {
 
-            int selectrezId = this.getTableSelectedRow(this.tbl_room, 0);
-            String giris = fld_room_checkin.getText();
-            String cikis = fld_room_checkout.getText();
-            int yetişkinSayisi = Integer.parseInt(fld_room_adult_count.getText());
-            int cocukSayisi = Integer.parseInt(fld_room_child_count.getText());
+                int selectrezId = this.getTableSelectedRow(this.tbl_room, 0);
+                String giris = fld_room_checkin.getText();
+                String cikis = fld_room_checkout.getText();
+                int yetişkinSayisi = Integer.parseInt(fld_room_adult_count.getText());
+                int cocukSayisi = Integer.parseInt(fld_room_child_count.getText());
 
-            ReservationView reservationView = new ReservationView(new Reservation(0), this.roomManager.getById(selectrezId), giris, cikis, yetişkinSayisi, cocukSayisi);
-            reservationView.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    loadReservationTable(null);
-                    loadRoomTable(null);
+                ReservationView reservationView = new ReservationView(new Reservation(0), this.roomManager.getById(selectrezId), giris, cikis, yetişkinSayisi, cocukSayisi);
+                reservationView.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        loadReservationTable(null);
+                        loadRoomTable(null);
 
-                }
-            });
-            }else {
+                    }
+                });
+            } else {
                 Helper.showMsg("Lütfen Giriş ve Çıkış Tarihlerini Giriniz");
             }
         });

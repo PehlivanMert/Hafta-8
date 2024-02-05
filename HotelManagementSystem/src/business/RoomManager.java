@@ -97,11 +97,12 @@ public class RoomManager {
         }
 
         if (checkIn != null && !checkIn.isEmpty()) {
-            whereList.add("season.baslangic BETWEEN '" + checkIn + "' AND season.bitis");
+            whereList.add("season.baslangic <= '" + checkIn + "'");
         }
         if (checkOut != null && !checkOut.isEmpty()) {
-            whereList.add("season.baslangic BETWEEN '" + checkOut + "' AND season.bitis");
+            whereList.add("season.bitis >= '" + checkOut + "'");
         }
+
         int totalCount = adultCount + childCount;
         if (totalCount != 0) {
             whereList.add("room.bed_capacity >=" + (totalCount));

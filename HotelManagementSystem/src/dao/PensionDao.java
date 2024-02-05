@@ -6,6 +6,7 @@ import entity.Pension;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PensionDao {
     private final Connection conn;
@@ -112,6 +113,25 @@ public class PensionDao {
             e.printStackTrace();
         }
         return obj;
+    }
+
+    public ArrayList<String> getOteleAitPensionlar(int hotelId) {
+        ArrayList<String> pensionlar = new ArrayList<>();
+        String query = "SELECT pension_type FROM public.pension WHERE hotel_id = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, hotelId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    pensionlar.add(rs.getString("pension_type"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+        return pensionlar;
     }
 
 }
