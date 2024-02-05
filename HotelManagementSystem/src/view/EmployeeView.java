@@ -134,7 +134,7 @@ public class EmployeeView extends Layout {
         //Rez
 
         loadReservationTable(null);
-        loadRezComponent();
+        //loadRezComponent();
 
 
         btn_logout.addActionListener(new ActionListener() {
@@ -209,7 +209,7 @@ public class EmployeeView extends Layout {
 
     public void loadSeasonTable() {
 
-        Object[] col_season = {"ID", "Otel ID", "Başlangıç Tarihi", "Bitiş Tarihi"};
+        Object[] col_season = {"ID", "Otel ID", "Başlangıç Tarihi", "Bitiş Tarihi","Sezon Faktörü"};
         ArrayList<Object[]> seasonList = this.seasonManager.getForTable(col_season.length, this.seasonManager.findAll());
         this.createTable(this.tmdl_season, this.tbl_season, col_season, seasonList);
 
@@ -260,7 +260,7 @@ public class EmployeeView extends Layout {
 
     public void loadPensionTable() {
 
-        Object[] col_pension = {"ID", "Otel ID", "Pansiyon Tipi"};
+        Object[] col_pension = {"ID", "Otel ID", "Pansiyon Tipi", "Pansiyon Faktörü"};
         ArrayList<Object[]> pensionList = this.pensionManager.getForTable(col_pension.length, this.pensionManager.findAll());
         this.createTable(this.tmdl_pension, this.tbl_pension, col_pension, pensionList);
 
@@ -312,12 +312,16 @@ public class EmployeeView extends Layout {
     public void loadRoomTable(ArrayList<Object[]> roomList) {
 
         this.col_room = new Object[]{"ID", "Otel Adı", "Pansiyon Tipi", "Oda Tipi", "Stok", "Yetişkin Fiyatı", "Çocuk Fiyatı", "Yatak Sayısı", "Metrekare", "TV", "Minibar", "Konsol", "Kasa", "Projeksiyon", "Otel ID"};
-        if (roomList == null) {
-
-            roomList = this.roomManager.getForTable(col_room.length, this.roomManager.findAll());
+        if (roomList == null || roomList.isEmpty()) {
+            // Boş bir roomList oluştur ve tabloyu güncelle
+            roomList = new ArrayList<>();
+            this.createTable(this.tmdl_room, this.tbl_room, col_room, roomList);
+        } else {
+            // RoomList dolu ise, mevcut verilerle tabloyu oluştur
+            this.createTable(this.tmdl_room, this.tbl_room, col_room, roomList);
         }
-        this.createTable(this.tmdl_room, this.tbl_room, col_room, roomList);
     }
+
     public void loadSearchTable() {
         ArrayList<Room> roomListBySearch = this.roomManager.searchForTable(
                 fld_room_hotel_name.getText(),
@@ -331,6 +335,7 @@ public class EmployeeView extends Layout {
         ArrayList<Object[]> roomRowListBySearch = this.roomManager.getForTable(this.col_room.length, roomListBySearch);
         loadRoomTable(roomRowListBySearch);
     }
+
     public void loadReservationTable(ArrayList<Object[]> reservationList) {
 
         this.col_reservation = new Object[]{"ID", "Oda ID", "Giriş Tarihi", "Çıkış Tarihi", "Toplam Tutar", "Misafir Sayısı", "Misafir Adı", "Misafir ID", "Misafir Mail", "Misafir Telefon No"};
@@ -347,7 +352,12 @@ public class EmployeeView extends Layout {
         this.rez_menu = new JPopupMenu();
         this.rez_menu.add("Yeni Rezervasyon Yap").addActionListener(e -> {
             int selectrezId = this.getTableSelectedRow(this.tbl_room, 0);
-            ReservationView reservationView = new ReservationView(this.roomManager.getById(selectrezId));
+            String giris = fld_room_checkin.getText();
+            String cikis = fld_room_checkout.getText();
+            int yetişkinSayisi = Integer.parseInt(fld_room_adult_count.getText());
+            int cocukSayisi = Integer.parseInt(fld_room_child_count.getText());
+
+            ReservationView reservationView = new ReservationView(this.roomManager.getById(selectrezId), giris, cikis, yetişkinSayisi, cocukSayisi);
             reservationView.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
@@ -359,7 +369,7 @@ public class EmployeeView extends Layout {
         this.tbl_room.setComponentPopupMenu(rez_menu);
     }
 
-    public void loadRezComponent() {
+    /*public void loadRezComponent() {
         tableSelectedRow(this.tbl_rez);
 
         this.rez_menu2 = new JPopupMenu();
@@ -369,7 +379,7 @@ public class EmployeeView extends Layout {
             reservationView.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
-                   loadReservationTable(null);
+                    loadReservationTable(null);
 
                 }
             });
@@ -389,7 +399,7 @@ public class EmployeeView extends Layout {
         });
         this.tbl_rez.setComponentPopupMenu(rez_menu2);
 
-    }
+    }*/
 }
 
 

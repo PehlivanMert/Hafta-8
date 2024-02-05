@@ -23,6 +23,7 @@ public class PensionManager {
             rowObject[i++] = obj.getPensionId();
             rowObject[i++] = obj.getHotelId();
             rowObject[i++] = obj.getPensionType();
+            rowObject[i++] = obj.getPensionFactor();
 
             pensionObjList.add(rowObject);
         }

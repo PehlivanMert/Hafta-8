@@ -33,6 +33,7 @@ public class PensionDao {
         obj.setPensionId(rs.getInt("pension_id"));
         obj.setHotelId(rs.getInt("hotel_id"));
         obj.setPensionType(rs.getString("pension_type"));
+        obj.setPensionFactor(rs.getDouble("pension_factor"));
 
 
         return obj;
@@ -43,15 +44,17 @@ public class PensionDao {
         String query = "INSERT INTO public.pension " +
                 "(" +
                 "hotel_id," +
-                "pension_type" +
+                "pension_type," +
+                "pension_factor" +
                 ")" +
-                " VALUES (?, ?)";
+                " VALUES (?, ?, ?)";
 
 
         try {
             PreparedStatement pr = this.conn.prepareStatement(query);
             pr.setInt(1, pension.getHotelId());
             pr.setString(2, pension.getPensionType());
+            pr.setDouble(3, pension.getPensionFactor());
 
             return pr.executeUpdate() != -1;
         } catch (SQLException e) {
@@ -63,7 +66,8 @@ public class PensionDao {
     public boolean update(Pension pension) {
         String query = "UPDATE public.pension SET " +
                 "hotel_id = ? ," +
-                "pension_type = ?  " +
+                "pension_type = ? , " +
+                "pension_factor = ? " +
                 "WHERE pension_id = ?";
 
 
@@ -72,8 +76,9 @@ public class PensionDao {
             PreparedStatement pr = this.conn.prepareStatement(query);
             pr.setInt(1, pension.getHotelId());
             pr.setString(2, pension.getPensionType());
+            pr.setDouble(3, pension.getPensionFactor());
 
-            pr.setInt(3, pension.getPensionId());
+            pr.setInt(4, pension.getPensionId());
             return pr.executeUpdate() != -1;
         } catch (SQLException e) {
             System.out.println(e.getMessage());

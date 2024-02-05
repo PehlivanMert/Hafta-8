@@ -35,6 +35,7 @@ public class SeasonDao {
             obj.setHotelId(rs.getInt("hotel_id"));
             obj.setStrt_date(LocalDate.parse(rs.getString("baslangic")));
             obj.setFnsh_date(LocalDate.parse(rs.getString("bitis")));
+            obj.setSeason_factor(rs.getDouble("season_factor"));
 
 
             return obj;
@@ -47,8 +48,9 @@ public class SeasonDao {
                     "hotel_id," +
                     "baslangic," +
                     "bitis" +
+                    "season_factor" +
                     ")" +
-                    " VALUES (?, ?, ?)";
+                    " VALUES (?, ?, ?, ?)";
 
 
             try {
@@ -56,6 +58,7 @@ public class SeasonDao {
                 pr.setInt(1, season.getHotelId());
                 pr.setDate(2, Date.valueOf(season.getStrt_date()));
                 pr.setDate(3, Date.valueOf(season.getFnsh_date()));
+                pr.setDouble(4, season.getSeason_factor());
                 return pr.executeUpdate() != -1;
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
@@ -68,6 +71,7 @@ public class SeasonDao {
                     "hotel_id = ? ," +
                     "baslangic = ? , " +
                     "bitis = ?  " +
+                    "season_factor = ? " +
                     "WHERE season_id = ?";
 
 
@@ -77,8 +81,9 @@ public class SeasonDao {
                 pr.setInt(1, season.getHotelId());
                 pr.setDate(2, Date.valueOf(season.getStrt_date()));
                 pr.setDate(3, Date.valueOf(season.getFnsh_date()));
+                pr.setDouble(4, season.getSeason_factor());
 
-                pr.setInt(4, season.getSeasonId());
+                pr.setInt(5, season.getSeasonId());
                 return pr.executeUpdate() != -1;
             } catch (SQLException e) {
                 System.out.println(e.getMessage());

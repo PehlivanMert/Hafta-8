@@ -50,7 +50,6 @@ public class ReservationDao {
     public boolean save(Reservation reservation) {
         String query = "INSERT INTO public.reservation " +
                 "(" +
-                "reservation_id," +
                 "room_id," +
                 "check_in_date," +
                 "check_out_date," +
@@ -61,21 +60,20 @@ public class ReservationDao {
                 "guest_mail," +
                 "guest_phone" +
                 ")" +
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 
         try {
             PreparedStatement pr = this.conn.prepareStatement(query);
-            pr.setInt(1, reservation.getReservation_id());
-            pr.setInt(2, reservation.getRoom_id());
-            pr.setDate(3, Date.valueOf(reservation.getCheckinDate()));
-            pr.setDate(4, Date.valueOf(reservation.getCheckoutDate()));
-            pr.setDouble(5, reservation.getTotal_price());
-            pr.setInt(6, reservation.getGuestCount());
-            pr.setString(7, reservation.getGuestName());
-            pr.setString(8, reservation.getGuestId());
-            pr.setString(9, reservation.getGuestMail());
-            pr.setString(10, reservation.getGuestPhone());
+            pr.setInt(1, reservation.getRoom_id());
+            pr.setDate(2, Date.valueOf(reservation.getCheckinDate()));
+            pr.setDate(3, Date.valueOf(reservation.getCheckoutDate()));
+            pr.setDouble(4, reservation.getTotal_price());
+            pr.setInt(5, reservation.getGuestCount());
+            pr.setString(6, reservation.getGuestName());
+            pr.setString(7, reservation.getGuestId());
+            pr.setString(8, reservation.getGuestMail());
+            pr.setString(9, reservation.getGuestPhone());
 
 
             return pr.executeUpdate() != -1;
@@ -112,7 +110,6 @@ public class ReservationDao {
             pr.setString(7, reservation.getGuestId());
             pr.setString(8, reservation.getGuestMail());
             pr.setString(9, reservation.getGuestPhone());
-
             pr.setInt(10, reservation.getReservation_id());
             return pr.executeUpdate() != -1;
         } catch (SQLException e) {
@@ -162,29 +159,97 @@ public class ReservationDao {
         return resList;
     }
 
-    public ArrayList<String> getHotelDetails(String hotelName) {
-        ArrayList<String> hotelDetails = new ArrayList<>();
-        String query = "SELECT hotel_id, hotel_name, hotel_address, hotel_star, hotel_carpark, hotel_wifi, hotel_pool, hotel_fitness, hotel_concierge, hotel_spa, hotel_roomservice FROM public.hotel WHERE hotel_name = ?";
+    public double searchForSeasonFactor(int hotel_id, String checkinDate, String checkoutDate) {
+        double seasonFactor = 0;
+        String select = "SELECT DISTINCT season.season_factor\n" +
+                "FROM room\n" +
+                "JOIN season ON room.hotel_id = season.hotel_id\n" +
+                "JOIN pension ON room.hotel_id = pension.hotel_id\n" +
+                "JOIN hotel ON room.hotel_id = hotel.hotel_id\n";
+
+        ArrayList<String> whereList = new ArrayList<>();
+        if (hotel_id != 0) {
+            whereList.add("room.hotel_id = ?");
+        }
+        if (checkinDate != null && !checkinDate.isEmpty()) {
+            whereList.add("season.baslangic BETWEEN ?::date AND season.bitis");
+        }
+        if (checkoutDate != null && !checkoutDate.isEmpty()) {
+            whereList.add("season.bitis BETWEEN ?::date AND season.bitis");
+        }
+
+        String whereStr = String.join(" AND ", whereList);
+        String query = select;
+        if (!whereStr.isEmpty()) {
+            query += " WHERE " + whereStr;
+        }
+
         try {
             PreparedStatement pr = this.conn.prepareStatement(query);
-            pr.setString(1, hotelName);
+            int parameterIndex = 1;
+            if (hotel_id != 0) {
+                pr.setInt(parameterIndex++, hotel_id);
+            }
+            if (checkinDate != null && !checkinDate.isEmpty()) {
+                pr.setDate(parameterIndex++, java.sql.Date.valueOf(checkinDate));
+            }
+            if (checkoutDate != null && !checkoutDate.isEmpty()) {
+                pr.setDate(parameterIndex++, java.sql.Date.valueOf(checkoutDate));
+            }
             ResultSet rs = pr.executeQuery();
             if (rs.next()) {
-                hotelDetails.add("Hotel ID: " + rs.getInt("hotel_id"));
-                hotelDetails.add("Hotel Name: " + rs.getString("hotel_name"));
-                hotelDetails.add("Hotel Address: " + rs.getString("hotel_address"));
-                hotelDetails.add("Hotel Star: " + rs.getInt("hotel_star"));
-                hotelDetails.add("Hotel Carpark: " + rs.getBoolean("hotel_carpark"));
-                hotelDetails.add("Hotel Wifi: " + rs.getBoolean("hotel_wifi"));
-                hotelDetails.add("Hotel Pool: " + rs.getBoolean("hotel_pool"));
-                hotelDetails.add("Hotel Fitness: " + rs.getBoolean("hotel_fitness"));
-                hotelDetails.add("Hotel Concierge: " + rs.getBoolean("hotel_concierge"));
-                hotelDetails.add("Hotel Spa: " + rs.getBoolean("hotel_spa"));
-                hotelDetails.add("Hotel Room Service: " + rs.getBoolean("hotel_roomservice"));
+                seasonFactor = rs.getDouble("season_factor");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return hotelDetails;
+
+        return seasonFactor;
     }
+
+
+
+    public double searchForPensionFactor(int hotel_id,String pensionType) {
+        double pensionFactor = 0;
+        String select = "SELECT DISTINCT pension.pension_factor\n" +
+                "FROM room\n" +
+                "JOIN season ON room.hotel_id = season.hotel_id\n" +
+                "JOIN pension ON room.hotel_id = pension.hotel_id\n" +
+                "JOIN hotel ON room.hotel_id = hotel.hotel_id\n";
+
+        ArrayList<String> whereList = new ArrayList<>();
+        if (hotel_id != 0) {
+            whereList.add("room.hotel_id = ?");
+        }
+        if (pensionType != null && !pensionType.isEmpty()) {
+            whereList.add("pension.pension_type ILIKE ?");
+        }
+
+
+        String whereStr = String.join(" AND ", whereList);
+        String query = select;
+        if (!whereStr.isEmpty()) {
+            query += " WHERE " + whereStr;
+        }
+
+        try {
+            PreparedStatement pr = this.conn.prepareStatement(query);
+            int parameterIndex = 1;
+            if (hotel_id != 0) {
+                pr.setInt(parameterIndex++, hotel_id);
+            }
+            if (pensionType != null && !pensionType.isEmpty()) {
+                pr.setString(parameterIndex++, pensionType);
+            }
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                pensionFactor = rs.getDouble("pension_factor");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return pensionFactor;
+    }
+
 }
