@@ -102,13 +102,13 @@ public class AdminView extends Layout {
                 loadUserTable(null);
             }
         });
-    }
+    }    // Değerlendirme 7
 
     public void loadUserTable(ArrayList<Object[]> UserList) {
         this.col_user = new Object[] {"ID", "Kullanıcı Adı", "Parola", "Rol"};
         ArrayList<Object[]> userList = this.userManager.getForTable(col_user.length);
         this.createTable(this.tmdl_user, this.tbl_user, col_user, userList);
-    }
+    } // Kullanıcı tablosu
 
     private void loadUserComponent() {
         tableSelectedRow(this.tbl_user);
@@ -138,6 +138,6 @@ public class AdminView extends Layout {
         });
         this.tbl_user.setComponentPopupMenu(user_menu);
 
-    }
+    } // Kullanıcı bileşenleri
 
 }

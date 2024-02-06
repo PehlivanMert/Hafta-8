@@ -71,6 +71,7 @@ public class RoomView extends Layout {
 
 
 
+
         List<String> otelIsimleri = hotelManager.getTumOtelIsimleri();
         cmb_hotel_name.setModel(new DefaultComboBoxModel<>(otelIsimleri.toArray(new String[0])));
 
@@ -87,6 +88,23 @@ public class RoomView extends Layout {
                 cmb_hotel_pension.setModel(new DefaultComboBoxModel<>(pensionlar.toArray(new String[0])));
             }
         });
+
+        if (this.room.getRoom_id() != 0){
+
+            this.cmb_hotel_name.setSelectedItem(this.room.getHotel_name());
+            this.cmb_hotel_pension.setSelectedItem(this.room.getPension_type());
+            this.cmb_room_type.setSelectedItem(this.room.getRoom_type());
+            this.fld_stock.setText(String.valueOf(this.room.getStock()));
+            this.fld_adult_price.setText(String.valueOf(this.room.getAdult_price()));
+            this.fld_child_price.setText(String.valueOf(this.room.getChild_price()));
+            this.fld_bed_capacity.setText(String.valueOf(this.room.getBed_capacity()));
+            this.fld_metrekare.setText(this.room.getMkare());
+            this.btn_kasa.setSelected(this.room.isKasa());
+            this.btn_konsol.setSelected(this.room.isKonsol());
+            this.btn_tv.setSelected(this.room.isTv());
+            this.btn_minibar.setSelected(this.room.isMinibar());
+            this.btn_projeksiyon.setSelected(this.room.isProjeksiyon());
+        }
 
 
         this.btn_save.addActionListener(e -> {
@@ -127,6 +145,6 @@ public class RoomView extends Layout {
                     Helper.showMsg("error");
                 }
             }
-        });
+        });   // Değerlendirme 13 - 14
     }
 }

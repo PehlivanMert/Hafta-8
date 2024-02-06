@@ -167,7 +167,7 @@ public class ReservationView extends Layout {
                 });
             }
         }
-    }
+    } // Rezervasyon ekleme // Değerlendirme 18 - 19
 
 
     public ReservationView(Reservation reservation) {
@@ -251,6 +251,6 @@ public class ReservationView extends Layout {
 
         }
 
-    }
+    } // Rezervasyon güncelleme // Değerlendirme 21 - 22
 
 }

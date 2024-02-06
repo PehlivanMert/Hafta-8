@@ -96,11 +96,8 @@ public class RoomManager {
             whereList.add("hotel.hotel_address ILIKE '" + city + "%'");
         }
 
-        if (checkIn != null && !checkIn.isEmpty()) {
-            whereList.add("season.baslangic <= '" + checkIn + "'");
-        }
-        if (checkOut != null && !checkOut.isEmpty()) {
-            whereList.add("season.bitis >= '" + checkOut + "'");
+        if (checkIn != null && !checkIn.isEmpty() && checkOut != null && !checkOut.isEmpty()) {
+            whereList.add(("'" + checkIn +"' >= season.baslangic AND '"+ checkOut +"' <= season.bitis"));
         }
 
         int totalCount = adultCount + childCount;
@@ -113,7 +110,6 @@ public class RoomManager {
         if (whereStr.length() > 0) {
             query += " WHERE " + whereStr;
         }
-        System.out.println(query);
         return this.roomDao.selectByQuery(query);
 
     }

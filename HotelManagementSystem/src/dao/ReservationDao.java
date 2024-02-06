@@ -169,13 +169,10 @@ public class ReservationDao {
 
         ArrayList<String> whereList = new ArrayList<>();
         if (hotel_id != 0) {
-            whereList.add("room.hotel_id = ?");
+            whereList.add("room.hotel_id =" + hotel_id);
         }
-        if (checkinDate != null && !checkinDate.isEmpty()) {
-            whereList.add("season.baslangic BETWEEN ?::date AND season.bitis");
-        }
-        if (checkoutDate != null && !checkoutDate.isEmpty()) {
-            whereList.add("season.bitis BETWEEN ?::date AND season.bitis");
+        if (checkinDate != null && !checkinDate.isEmpty() && checkoutDate != null && !checkoutDate.isEmpty()) {
+            whereList.add(("'" + checkinDate +"' >= season.baslangic AND '"+ checkoutDate +"' <= season.bitis"));
         }
 
         String whereStr = String.join(" AND ", whereList);
@@ -184,28 +181,20 @@ public class ReservationDao {
             query += " WHERE " + whereStr;
         }
 
-        try {
-            PreparedStatement pr = this.conn.prepareStatement(query);
-            int parameterIndex = 1;
-            if (hotel_id != 0) {
-                pr.setInt(parameterIndex++, hotel_id);
+            try {
+                Statement statement = this.conn.createStatement();
+                ResultSet rs = statement.executeQuery(query);
+                if (rs.next()) {
+                    seasonFactor = rs.getDouble("season_factor");
+                }
+                rs.close();
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            if (checkinDate != null && !checkinDate.isEmpty()) {
-                pr.setDate(parameterIndex++, java.sql.Date.valueOf(checkinDate));
-            }
-            if (checkoutDate != null && !checkoutDate.isEmpty()) {
-                pr.setDate(parameterIndex++, java.sql.Date.valueOf(checkoutDate));
-            }
-            ResultSet rs = pr.executeQuery();
-            if (rs.next()) {
-                seasonFactor = rs.getDouble("season_factor");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
-        return seasonFactor;
-    }
+            return seasonFactor;
+        }
 
 
 
