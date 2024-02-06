@@ -34,6 +34,7 @@ Bu proje, Patika Turizm Acentesi'nin işlerini dijital ortamda yürütebilmesi i
 5. Personel olarak giriş yapmak için `employee` kullanıcı adı ve `1234` şifresi ile giriş yapabilirsiniz.
 6. Operasyonun geneli `EmployeeView` sınıfı içerisinde bulunmaktadır.
 7. Programı çalıştırmak için `Main` sınıfını çalıştırabilirsiniz.
+8. Proje ile ilgili örnek ekran görüntülerine `src/zProje` Fotoğrafları klasörü içerisinden inceleyebilirsiniz.
 8. İyi eğlenceler! 👋🏼          ![img_2.png](img_2.png) 😄
 
 ## Katkılar
