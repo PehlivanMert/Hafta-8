@@ -389,7 +389,7 @@ public class EmployeeView extends Layout {
     }    // Pansiyon Tablo Menüsü
 
     public void loadRoomTable(ArrayList<Object[]> roomList) {
-        this.col_room = new Object[]{"ID", "Otel Adı", "Pansiyon Tipi", "Oda Tipi", "Stok", "Yetişkin Fiyatı", "Çocuk Fiyatı", "Yatak Sayısı", "Metrekare", "TV", "Minibar", "Konsol", "Kasa", "Projeksiyon", "Otel ID"};
+        this.col_room = new Object[]{"ID","Şehir", "Otel Adı", "Pansiyon Tipi", "Oda Tipi", "Stok", "Yetişkin Fiyatı", "Çocuk Fiyatı", "Yatak Sayısı", "Metrekare", "TV", "Minibar", "Konsol", "Kasa", "Projeksiyon", "Otel ID"};
         // Stok kontrollü tablo oluşturma
         if (roomList == null || roomList.isEmpty()) {
             roomList = new ArrayList<>();
@@ -397,7 +397,7 @@ public class EmployeeView extends Layout {
         } else {
             ArrayList<Object[]> filteredRoomList = new ArrayList<>();
             for (Object[] room : roomList) {
-                int stock = (int) room[4];
+                int stock = (int) room[5];
                 if (stock > 0) {
                     filteredRoomList.add(room);
                 }

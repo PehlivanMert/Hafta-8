@@ -30,6 +30,7 @@ public class RoomManager {
 
             int i = 0;
             rowObject[i++] = obj.getRoom_id();
+            rowObject[i++] = hotel.getAddress();
             rowObject[i++] = hotel.getName();
             rowObject[i++] = obj.getPension_type();
             rowObject[i++] = obj.getRoom_type();
