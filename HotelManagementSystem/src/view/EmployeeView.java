@@ -404,7 +404,7 @@ public class EmployeeView extends Layout {
             }
             this.createTable(this.tmdl_room, this.tbl_room, col_room, filteredRoomList);
         }
-    }  // Oda Tablosu
+    }  // Stok kontrollü Oda Tablosu
 
     public void loadRoomComponent() {
 
