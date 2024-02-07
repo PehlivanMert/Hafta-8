@@ -2,13 +2,17 @@ package business;
 
 import core.Helper;
 import dao.PensionDao;
+import entity.Hotel;
 import entity.Pension;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PensionManager {
 
     private final PensionDao pensionDao;
+    private HotelManager hotelManager = new HotelManager();
+    private Hotel hotel;
 
     public PensionManager() {
         this.pensionDao = new PensionDao();
@@ -19,9 +23,12 @@ public class PensionManager {
         for (Pension obj : seasons) {
             Object[] rowObject = new Object[size];
 
+            this.hotel = hotelManager.getById(obj.getHotelId());
+
             int i = 0;
             rowObject[i++] = obj.getPensionId();
             rowObject[i++] = obj.getHotelId();
+            rowObject[i++] = hotel.getName();
             rowObject[i++] = obj.getPensionType();
             rowObject[i++] = obj.getPensionFactor();
 
@@ -62,6 +69,10 @@ public class PensionManager {
 
     public ArrayList<String> getOteleAitPensionlar(int hotelId ){
         return this.pensionDao.getOteleAitPensionlar(hotelId);
+    }
+
+    public List<Pension> getPensionsByHotelId(int hotelId) {
+        return this.pensionDao.getPensionsByHotelId(hotelId);
     }
 
 }

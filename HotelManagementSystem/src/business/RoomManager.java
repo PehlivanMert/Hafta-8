@@ -10,10 +10,12 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class RoomManager {
     private final RoomDao roomDao;
-    private HotelManager hotelManager;
+    private HotelManager hotelManager = new HotelManager();
+    Hotel hotel ;
 
     public RoomManager() {
         this.roomDao = new RoomDao();
@@ -24,9 +26,11 @@ public class RoomManager {
         for (Room obj : rooms) {
             Object[] rowObject = new Object[size];
 
+            hotel = hotelManager.getById(obj.getHotel_id());
+
             int i = 0;
             rowObject[i++] = obj.getRoom_id();
-            rowObject[i++] = obj.getHotel_name();
+            rowObject[i++] = hotel.getName();
             rowObject[i++] = obj.getPension_type();
             rowObject[i++] = obj.getRoom_type();
             rowObject[i++] = obj.getStock();
@@ -116,6 +120,10 @@ public class RoomManager {
 
     public void updateStock(int roomId,int roomCount) {
         this.roomDao.updateStock(roomId,roomCount);
+    }
+
+    public List<Room> getRoomsByHotelId(int hotelId) {
+        return this.roomDao.getRoomsByHotelId(hotelId);
     }
 
 }

@@ -1,13 +1,13 @@
 package dao;
 
 import core.Db;
-import entity.Hotel;
-import entity.Reservation;
+import entity.*;
 import entity.Reservation;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ReservationDao {
 
@@ -88,12 +88,12 @@ public class ReservationDao {
                 "room_id = ? ," +
                 "check_in_date = ? , " +
                 "check_out_date = ? , " +
-                "stock = ? , " +
                 "total_price = ? , " +
                 "guest_count = ? , " +
+                "guest_name = ? , " +
                 "guest_citizen_id = ? , " +
                 "guest_mail = ? , " +
-                "guest_phone = ? , " +
+                "guest_phone = ? " +
 
                 "WHERE reservation_id = ?";
 
@@ -110,6 +110,7 @@ public class ReservationDao {
             pr.setString(7, reservation.getGuestId());
             pr.setString(8, reservation.getGuestMail());
             pr.setString(9, reservation.getGuestPhone());
+
             pr.setInt(10, reservation.getReservation_id());
             return pr.executeUpdate() != -1;
         } catch (SQLException e) {
@@ -239,6 +240,83 @@ public class ReservationDao {
         }
 
         return pensionFactor;
+    }
+
+    public List<Integer> getReservationIdsByRoomIds(List<Room> roomsToDelete) {
+        List<Integer> reservationIds = new ArrayList<>();
+        List<Integer> roomIds = new ArrayList<>();
+        for (Room room : roomsToDelete) {
+            roomIds.add(room.getRoom_id());
+        }
+
+        // Odalara ait rezervasyonları sorgula
+        if (!roomIds.isEmpty()) { // Eğer odalar varsa sorguyu yap
+            StringBuilder queryBuilder = new StringBuilder("SELECT reservation_id FROM reservation WHERE room_id IN (");
+            for (int i = 0; i < roomIds.size(); i++) {
+                queryBuilder.append("?");
+                if (i < roomIds.size() - 1) {
+                    queryBuilder.append(",");
+                }
+            }
+            queryBuilder.append(")");
+
+            PreparedStatement statement = null;
+            ResultSet resultSet = null;
+            try {
+                statement = this.conn.prepareStatement(queryBuilder.toString());
+                int parameterIndex = 1;
+                for (Integer roomId : roomIds) {
+                    statement.setInt(parameterIndex++, roomId);
+                }
+
+                resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    reservationIds.add(resultSet.getInt("reservation_id"));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (resultSet != null) {
+                    try {
+                        resultSet.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (statement != null) {
+                    try {
+                        statement.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return reservationIds;
+    }
+
+
+    public List<Reservation> getReservationByRoomId(int roomId) {
+        List<Reservation> reservations = new ArrayList<>();
+        try {
+            // Veritabanından otel id ye göre rezervasyonları sorgula
+            PreparedStatement statement = this.conn.prepareStatement("SELECT * FROM reservation WHERE room_id = ?");
+            statement.setInt(1, roomId);
+            ResultSet resultSet = statement.executeQuery();
+            // Sorgu sonucunda dönen rezervasyonları listeye ekle
+            while (resultSet.next()) {
+                Reservation reservation = new Reservation();
+                reservation.setReservation_id(resultSet.getInt("reservation_id"));
+                reservations.add(reservation);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Hata durumunda boş bir liste döndür
+            return reservations;
+        }
+        // Rezervasyonları içeren listeyi döndür
+        return reservations;
+
     }
 
 }

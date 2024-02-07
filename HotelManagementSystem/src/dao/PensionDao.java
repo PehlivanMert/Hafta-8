@@ -2,6 +2,8 @@ package dao;
 
 import core.Db;
 import entity.Pension;
+import entity.Room;
+import entity.Season;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -132,6 +134,29 @@ public class PensionDao {
 
         }
         return pensionlar;
+    }
+
+    public List<Pension> getPensionsByHotelId(int hotelId) {
+        List<Pension> pensionss = new ArrayList<>();
+        try {
+            // Veritabanından otel id ye göre pansiyonları sorgula
+            PreparedStatement statement = this.conn.prepareStatement("SELECT * FROM pension WHERE hotel_id = ?");
+            statement.setInt(1, hotelId);
+            ResultSet resultSet = statement.executeQuery();
+            // Sorgu sonucunda dönen pansiyonları listeye ekle
+            while (resultSet.next()) {
+                Pension pension = new Pension();
+                pension.setPensionId(resultSet.getInt("pension_id"));
+                pensionss.add(pension);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Hata durumunda boş bir liste döndür
+            return pensionss;
+        }
+        // Odaları içeren listeyi döndür
+        return pensionss;
+
     }
 
 }

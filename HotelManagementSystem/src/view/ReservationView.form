@@ -430,7 +430,8 @@
               </grid>
             </constraints>
             <properties>
-              <enabled value="false"/>
+              <enabled value="true"/>
+              <text value="0"/>
             </properties>
           </component>
           <component id="65920" class="javax.swing.JTextField" binding="fld_adultcount">
@@ -440,8 +441,8 @@
               </grid>
             </constraints>
             <properties>
-              <enabled value="false"/>
-              <text value=""/>
+              <enabled value="true"/>
+              <text value="0"/>
             </properties>
           </component>
         </children>

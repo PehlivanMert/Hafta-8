@@ -1,12 +1,14 @@
 package dao;
 
 import core.Db;
+import entity.Room;
 import entity.Season;
 import entity.Season;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SeasonDao {
     private final Connection conn;
@@ -118,6 +120,29 @@ public class SeasonDao {
             }
             return obj;
         }
+
+    public List<Season> getSeasonsByHotelId(int hotelId) {
+        List<Season> seasons = new ArrayList<>();
+        try {
+            // Veritabanından otel id ye göre Sezonları sorgula
+            PreparedStatement statement = this.conn.prepareStatement("SELECT * FROM season WHERE hotel_id = ?");
+            statement.setInt(1, hotelId);
+            ResultSet resultSet = statement.executeQuery();
+            // Sorgu sonucunda dönen sezonları listeye ekle
+            while (resultSet.next()) {
+                Season season = new Season();
+                season.setSeasonId(resultSet.getInt("season_id"));
+                seasons.add(season);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Hata durumunda boş bir liste döndür
+            return seasons;
+        }
+        // Sezonları içeren listeyi döndür
+        return seasons;
+
+    }
 
     }
 

@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 public class EmployeeView extends Layout {
 
@@ -145,6 +146,7 @@ public class EmployeeView extends Layout {
                     @Override
                     public void windowClosed(WindowEvent e) {
                         loadRoomTable(null);
+                        loadReservationTable(null);
                     }
                 });
                 } catch (Exception a) {
@@ -210,30 +212,81 @@ public class EmployeeView extends Layout {
                 @Override
                 public void windowClosed(WindowEvent e) {
                     loadHotelTable();
+                    loadPensionTable();
+                    loadSeasonTable();
+                    loadRoomTable(null);
+                    loadReservationTable(null);
 
                 }
             });
         });
 
         this.hotel_menu.add("Sil").addActionListener(e -> {
-            if (Helper.confirm("sure")) {
+            if (Helper.confirm("Otele ait tüm veriler silinecektir.\nEmin misiniz?")) {
                 int selectHotelId = this.getTableSelectedRow(this.tbl_hotel, 0);
                 if (this.hotelManager.delete(selectHotelId)) {
-                    Helper.showMsg("done");
-                    loadHotelTable();
+                    // Odaları silme işlemi
+                    List<Room> roomsToDelete = this.roomManager.getRoomsByHotelId(selectHotelId);
+                    boolean allRoomsDeleted = true;
+                    for (Room room : roomsToDelete) {
+                        if (!this.roomManager.delete(room.getRoom_id())) {
+                            allRoomsDeleted = false;
+                            break;
+                        }
+                    }
+                    // Rezervasyonları silme işlemi
+                    List<Integer> reservationToDelete = this.reservationManager.getReservationIdsByRoomIds(roomsToDelete);
+                    boolean allReservationsDeleted = true;
+                    for (int reservationId : reservationToDelete) {
+                        if (!this.reservationManager.delete(reservationId)) {
+                            allReservationsDeleted = false;
+                            break;
+                        }
+                    }
 
+                    // Sezonları silme işlemi
+                    List<Season> seasonsToDelete = this.seasonManager.getSeasonsByHotelId(selectHotelId);
+                    boolean allSeasonsDeleted = true;
+                    for (Season season : seasonsToDelete) {
+                        if (!this.seasonManager.delete(season.getSeasonId())) {
+                            allSeasonsDeleted = false;
+                            break;
+                        }
+                    }
+                    // Pansiyonları silme işlemi
+                    List<Pension> pensionsToDelete = this.pensionManager.getPensionsByHotelId(selectHotelId);
+                    boolean allPensionsDeleted = true;
+                    for (Pension pension : pensionsToDelete) {
+                        if (!this.pensionManager.delete(pension.getPensionId())) {
+                            allPensionsDeleted = false;
+                            break;
+                        }
+                    }
+                    // Silme işlemlerinin sonucunda
+                    if (allRoomsDeleted && allSeasonsDeleted && allPensionsDeleted) {
+                        Helper.showMsg("Otel ve ilgili değerler silindi.");
+                        loadHotelTable();
+                        loadRoomTable(null);
+                        loadSeasonTable();
+                        loadPensionTable();
+                        loadReservationTable(null);
+                        // Diğer tabloları güncelleme
+                    } else {
+                        Helper.showMsg("Otel silindi ancak ilgili değerlerin bir kısmı silinemedi.");
+                    }
                 } else {
-                    Helper.showMsg("error");
+                    Helper.showMsg("Otel silinemedi.");
                 }
             }
         });
+
         this.tbl_hotel.setComponentPopupMenu(hotel_menu);
 
-    }  // Otel Tablo Menüsü
+    } // Otel Tablo Menüsü
 
     public void loadSeasonTable() {
 
-        Object[] col_season = {"ID", "Otel ID", "Başlangıç Tarihi", "Bitiş Tarihi", "Sezon Faktörü"};
+        Object[] col_season = {"ID","Otel ID","Otel Adı", "Başlangıç Tarihi", "Bitiş Tarihi", "Sezon Faktörü"};
         ArrayList<Object[]> seasonList = this.seasonManager.getForTable(col_season.length, this.seasonManager.findAll());
         this.createTable(this.tmdl_season, this.tbl_season, col_season, seasonList);
 
@@ -284,7 +337,7 @@ public class EmployeeView extends Layout {
 
     public void loadPensionTable() {
 
-        Object[] col_pension = {"ID", "Otel ID", "Pansiyon Tipi", "Pansiyon Faktörü"};
+        Object[] col_pension = {"ID","Otel ID","Otel Adı", "Pansiyon Tipi", "Pansiyon Faktörü"};
         ArrayList<Object[]> pensionList = this.pensionManager.getForTable(col_pension.length, this.pensionManager.findAll());
         this.createTable(this.tmdl_pension, this.tbl_pension, col_pension, pensionList);
 
@@ -312,6 +365,8 @@ public class EmployeeView extends Layout {
                 @Override
                 public void windowClosed(WindowEvent e) {
                     loadPensionTable();
+                    loadRoomTable(null);
+                    loadReservationTable(null);
 
                 }
             });
@@ -351,31 +406,6 @@ public class EmployeeView extends Layout {
         }
     }  // Oda Tablosu
 
-
-    public void loadSearchTable() {
-        ArrayList<Room> roomListBySearch = this.roomManager.searchForTable(
-                fld_room_hotel_name.getText(),
-                fld_room_city.getText(),
-                fld_room_checkin.getText(),
-                fld_room_checkout.getText(),
-                fld_room_adult_count.getText(),
-                fld_room_child_count.getText()
-        );
-
-        ArrayList<Object[]> roomRowListBySearch = this.roomManager.getForTable(this.col_room.length, roomListBySearch);
-        loadRoomTable(roomRowListBySearch);
-    }   // Oda Arama // Değerlendirme 15 - 16 - 17 Fiyat Hesaplama Helper sınıfında yapıldı
-
-    public void loadReservationTable(ArrayList<Object[]> reservationList) {
-
-        this.col_reservation = new Object[]{"ID", "Oda ID", "Giriş Tarihi", "Çıkış Tarihi", "Toplam Tutar", "Misafir Sayısı", "Misafir Adı", "Misafir ID", "Misafir Mail", "Misafir Telefon No"};
-        if (reservationList == null) {
-
-            reservationList = this.reservationManager.getForTable(col_reservation.length, this.reservationManager.findAll());
-        }
-        this.createTable(this.tmdl_reservation, this.tbl_rez, col_reservation, reservationList);
-    }  // Rezervasyon Tablosu Değerlendirme 20
-
     public void loadRoomComponent() {
 
         tableSelectedRow(this.tbl_room);
@@ -400,11 +430,63 @@ public class EmployeeView extends Layout {
                     }
                 });
             } else {
-                Helper.showMsg("Lütfen Giriş - Çıkış Tarihlerini\nVE\nKonaklayacak Kişi Sayılarını Giriniz");
+                Helper.showMsg("Lütfen Giriş-Çıkış Tarihleri ve Misafir Sayısını Giriniz!");
+            }
+        });
+        this.rez_menu.add("Oda Sil").addActionListener(e -> {
+            if (Helper.confirm("Odaya ait tüm veriler silinecektir.\nEmin misiniz?")) {
+                int selectRoomId = this.getTableSelectedRow(this.tbl_room, 0);
+                if (this.roomManager.delete(selectRoomId)) {
+                    // Rezervasyonları silme işlemi
+                    List<Reservation> reservationsToDelete = this.reservationManager.getReservationByRoomId(selectRoomId);
+                    boolean allReservationsDeleted = true;
+                    for (Reservation reservation : reservationsToDelete) {
+                        if (!this.reservationManager.delete(reservation.getReservation_id())) {
+                            allReservationsDeleted = false;
+                            break;
+                        }
+                    }
+
+                    // Silme işlemlerinin sonucunda
+                    if (allReservationsDeleted) {
+                        Helper.showMsg("Oda ve rezervasyonlar silindi");
+                        loadRoomTable(null);
+                        loadReservationTable(null);
+                        // Diğer tabloları güncelleme
+                    } else {
+                        Helper.showMsg("Oda silindi ancak ilgili değerlerin bir kısmı silinemedi.");
+                    }
+                } else {
+                    Helper.showMsg("Oda silinemedi.");
+                }
             }
         });
         this.tbl_room.setComponentPopupMenu(rez_menu);
     }  // Oda Tablo Menüsü
+
+    public void loadSearchTable() {
+        ArrayList<Room> roomListBySearch = this.roomManager.searchForTable(
+                fld_room_hotel_name.getText(),
+                fld_room_city.getText(),
+                fld_room_checkin.getText(),
+                fld_room_checkout.getText(),
+                fld_room_adult_count.getText(),
+                fld_room_child_count.getText()
+        );
+
+        ArrayList<Object[]> roomRowListBySearch = this.roomManager.getForTable(this.col_room.length, roomListBySearch);
+        loadRoomTable(roomRowListBySearch);
+    }   // Oda Arama // Değerlendirme 15 - 16 - 17 Fiyat Hesaplama Helper sınıfında yapıldı
+
+    public void loadReservationTable(ArrayList<Object[]> reservationList) {
+
+        this.col_reservation = new Object[]{"ID", "Oda ID", "Otel Adı", "Pansiyon Tipi","Adres", "Giriş Tarihi", "Çıkış Tarihi", "Toplam Tutar", "Misafir Sayısı", "Misafir Adı", "Misafir ID", "Misafir Mail", "Misafir Telefon No"};
+        if (reservationList == null) {
+
+            reservationList = this.reservationManager.getForTable(col_reservation.length, this.reservationManager.findAll());
+        }
+        this.createTable(this.tmdl_reservation, this.tbl_rez, col_reservation, reservationList);
+    }  // Rezervasyon Tablosu Değerlendirme 20
 
     public void loadRezComponent() {
         tableSelectedRow(this.tbl_rez);

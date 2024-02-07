@@ -6,6 +6,7 @@ import entity.Room;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RoomDao {
     private final Connection conn;
@@ -31,7 +32,6 @@ public class RoomDao {
     public Room match(ResultSet rs) throws SQLException {
         Room obj = new Room();
         obj.setRoom_id(rs.getInt("room_id"));
-        obj.setHotel_name(rs.getString("hotel_name"));
         obj.setPension_type(rs.getString("pension_type"));
         obj.setRoom_type(rs.getString("room_type"));
         obj.setStock(rs.getInt("stock"));
@@ -54,7 +54,6 @@ public class RoomDao {
     public boolean save(Room room) {
         String query = "INSERT INTO public.room " +
                 "(" +
-                "hotel_name," +
                 "pension_type," +
                 "room_type," +
                 "stock," +
@@ -69,25 +68,24 @@ public class RoomDao {
                 "projeksiyon," +
                 "hotel_id" +
                 ")" +
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 
         try {
             PreparedStatement pr = this.conn.prepareStatement(query);
-            pr.setString(1, room.getHotel_name());
-            pr.setString(2, room.getPension_type());
-            pr.setString(3, room.getRoom_type());
-            pr.setInt(4, room.getStock());
-            pr.setDouble(5, room.getAdult_price());
-            pr.setDouble(6, room.getChild_price());
-            pr.setInt(7, room.getBed_capacity());
-            pr.setString(8, room.getMkare());
-            pr.setBoolean(9, room.isTv());
-            pr.setBoolean(10, room.isMinibar());
-            pr.setBoolean(11, room.isKonsol());
-            pr.setBoolean(12, room.isKasa());
-            pr.setBoolean(13, room.isProjeksiyon());
-            pr.setInt(14, room.getHotel_id());
+            pr.setString(1, room.getPension_type());
+            pr.setString(2, room.getRoom_type());
+            pr.setInt(3, room.getStock());
+            pr.setDouble(4, room.getAdult_price());
+            pr.setDouble(5, room.getChild_price());
+            pr.setInt(6, room.getBed_capacity());
+            pr.setString(7, room.getMkare());
+            pr.setBoolean(8, room.isTv());
+            pr.setBoolean(9, room.isMinibar());
+            pr.setBoolean(10, room.isKonsol());
+            pr.setBoolean(11, room.isKasa());
+            pr.setBoolean(12, room.isProjeksiyon());
+            pr.setInt(13, room.getHotel_id());
 
             return pr.executeUpdate() != -1;
         } catch (SQLException e) {
@@ -98,7 +96,6 @@ public class RoomDao {
 
     public boolean update(Room room) {
         String query = "UPDATE public.room SET " +
-                "hotel_name = ? ," +
                 "pension_type = ? , " +
                 "room_type = ? , " +
                 "stock = ? , " +
@@ -118,22 +115,21 @@ public class RoomDao {
         try {
 
             PreparedStatement pr = this.conn.prepareStatement(query);
-            pr.setString(1, room.getHotel_name());
-            pr.setString(2, room.getPension_type());
-            pr.setString(3, room.getRoom_type());
-            pr.setInt(4, room.getStock());
-            pr.setDouble(5, room.getAdult_price());
-            pr.setDouble(6, room.getChild_price());
-            pr.setInt(7, room.getBed_capacity());
-            pr.setString(8, room.getMkare());
-            pr.setBoolean(9, room.isTv());
-            pr.setBoolean(10, room.isMinibar());
-            pr.setBoolean(11, room.isKonsol());
-            pr.setBoolean(12, room.isKasa());
-            pr.setBoolean(13, room.isProjeksiyon());
-            pr.setInt(14, room.getHotel_id());
+            pr.setString(1, room.getPension_type());
+            pr.setString(2, room.getRoom_type());
+            pr.setInt(3, room.getStock());
+            pr.setDouble(4, room.getAdult_price());
+            pr.setDouble(5, room.getChild_price());
+            pr.setInt(6, room.getBed_capacity());
+            pr.setString(7, room.getMkare());
+            pr.setBoolean(8, room.isTv());
+            pr.setBoolean(9, room.isMinibar());
+            pr.setBoolean(10, room.isKonsol());
+            pr.setBoolean(11, room.isKasa());
+            pr.setBoolean(12, room.isProjeksiyon());
+            pr.setInt(13, room.getHotel_id());
 
-            pr.setInt(15, room.getRoom_id());
+            pr.setInt(14, room.getRoom_id());
             return pr.executeUpdate() != -1;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -182,7 +178,7 @@ public class RoomDao {
         return roomList;
     }
 
-    public void updateStock(int roomId,int roomCount) {
+    public void updateStock(int roomId, int roomCount) {
         String updateQuery = "UPDATE public.room SET stock = stock + ? WHERE room_id = ?";
 
         try {
@@ -197,5 +193,27 @@ public class RoomDao {
         }
     }
 
+    public List<Room> getRoomsByHotelId(int hotelId) {
+        List<Room> rooms = new ArrayList<>();
+        try {
+            // Veritabanından otel id ye göre odaları sorgula
+            PreparedStatement statement = this.conn.prepareStatement("SELECT * FROM room WHERE hotel_id = ?");
+            statement.setInt(1, hotelId);
+            ResultSet resultSet = statement.executeQuery();
+            // Sorgu sonucunda dönen odaları listeye ekle
+            while (resultSet.next()) {
+                Room room = new Room();
+                room.setRoom_id(resultSet.getInt("room_id"));
+                rooms.add(room);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Hata durumunda boş bir liste döndür
+            return rooms;
+        }
+        // Odaları içeren listeyi döndür
+        return rooms;
+
+    }
 }
 
