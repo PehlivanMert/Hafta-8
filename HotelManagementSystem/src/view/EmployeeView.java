@@ -181,7 +181,7 @@ public class EmployeeView extends Layout {
                     LocalDate checkoutDate = LocalDate.parse(checkoutText);
 
                     // Check-in tarihi, check-out tarihinden önce olmalı veya aynı gün olmamalı
-                    if (checkinDate.isBefore(checkoutDate) || !checkinText.equals(checkoutText)) {
+                    if (checkinDate.isBefore(checkoutDate) && !checkinText.equals(checkoutText)) {
                         loadSearchTable(); // Geçerli tarihler, tabloyu yükle
                     } else {
                         Helper.showMsg("Check-in - Check-out Tarihlerini Kontrol Ediniz!");
