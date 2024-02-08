@@ -12,8 +12,10 @@ import java.awt.event.ActionListener;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class EmployeeView extends Layout {
 
@@ -134,9 +136,9 @@ public class EmployeeView extends Layout {
         });
 
 
-            tableSelectedRow(this.tbl_room);
-            duzenleButton.addActionListener(e -> {
-                try {
+        tableSelectedRow(this.tbl_room);
+        duzenleButton.addActionListener(e -> {
+            try {
                 int selectRoomId = this.getTableSelectedRow(this.tbl_room, 0);
 
 
@@ -149,11 +151,10 @@ public class EmployeeView extends Layout {
                         loadReservationTable(null);
                     }
                 });
-                } catch (Exception a) {
-                    Helper.showMsg("Lütfen Bir Oda Seçiniz!");
-                }
-            });
-
+            } catch (Exception a) {
+                Helper.showMsg("Lütfen Bir Oda Seçiniz!");
+            }
+        });
 
 
         //Rez
@@ -168,13 +169,31 @@ public class EmployeeView extends Layout {
                 dispose();
             }
         }); // Çıkış
-        btn_search_room.addActionListener(new ActionListener() {  // oda arama
+        btn_search_room.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                loadSearchTable();
+                String checkinText = fld_room_checkin.getText();
+                String checkoutText = fld_room_checkout.getText();
 
+                // Tarihlerin doğru formatta olup olmadığını kontrol et
+                if (checkinText.matches("\\d{4}-\\d{2}-\\d{2}") && checkoutText.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                    LocalDate checkinDate = LocalDate.parse(checkinText);
+                    LocalDate checkoutDate = LocalDate.parse(checkoutText);
+
+                    // Check-in tarihi, check-out tarihinden önce olmalı veya aynı gün olmamalı
+                    if (checkinDate.isBefore(checkoutDate) || !checkinText.equals(checkoutText)) {
+                        loadSearchTable(); // Geçerli tarihler, tabloyu yükle
+                    } else {
+                        Helper.showMsg("Check-in - Check-out Tarihlerini Kontrol Ediniz!");
+                    }
+                } else {
+                    Helper.showMsg("Lütfen geçerli tarih formatı giriniz (yyyy-MM-dd)!");
+                }
             }
         });
+
+
+
         btn_reset.addActionListener(new ActionListener() { //Oda Listesi Sıfırlama
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -286,7 +305,7 @@ public class EmployeeView extends Layout {
 
     public void loadSeasonTable() {
 
-        Object[] col_season = {"ID","Otel ID","Otel Adı", "Başlangıç Tarihi", "Bitiş Tarihi", "Sezon Faktörü"};
+        Object[] col_season = {"ID", "Otel ID", "Otel Adı", "Başlangıç Tarihi", "Bitiş Tarihi", "Sezon Faktörü"};
         ArrayList<Object[]> seasonList = this.seasonManager.getForTable(col_season.length, this.seasonManager.findAll());
         this.createTable(this.tmdl_season, this.tbl_season, col_season, seasonList);
 
@@ -337,7 +356,7 @@ public class EmployeeView extends Layout {
 
     public void loadPensionTable() {
 
-        Object[] col_pension = {"ID","Otel ID","Otel Adı", "Pansiyon Tipi", "Pansiyon Faktörü"};
+        Object[] col_pension = {"ID", "Otel ID", "Otel Adı", "Pansiyon Tipi", "Pansiyon Faktörü"};
         ArrayList<Object[]> pensionList = this.pensionManager.getForTable(col_pension.length, this.pensionManager.findAll());
         this.createTable(this.tmdl_pension, this.tbl_pension, col_pension, pensionList);
 
@@ -389,7 +408,7 @@ public class EmployeeView extends Layout {
     }    // Pansiyon Tablo Menüsü
 
     public void loadRoomTable(ArrayList<Object[]> roomList) {
-        this.col_room = new Object[]{"ID","Şehir", "Otel Adı", "Pansiyon Tipi", "Oda Tipi", "Stok", "Yetişkin Fiyatı", "Çocuk Fiyatı", "Yatak Sayısı", "Metrekare", "TV", "Minibar", "Konsol", "Kasa", "Projeksiyon", "Otel ID"};
+        this.col_room = new Object[]{"ID", "Şehir", "Otel Adı", "Pansiyon Tipi", "Oda Tipi", "Stok", "Yetişkin Fiyatı", "Çocuk Fiyatı", "Yatak Sayısı", "Metrekare", "TV", "Minibar", "Konsol", "Kasa", "Projeksiyon", "Otel ID"};
         // Stok kontrollü tablo oluşturma
         if (roomList == null || roomList.isEmpty()) {
             roomList = new ArrayList<>();
@@ -480,7 +499,7 @@ public class EmployeeView extends Layout {
 
     public void loadReservationTable(ArrayList<Object[]> reservationList) {
 
-        this.col_reservation = new Object[]{"ID", "Oda ID", "Otel Adı", "Pansiyon Tipi","Adres", "Giriş Tarihi", "Çıkış Tarihi", "Toplam Tutar", "Misafir Sayısı", "Misafir Adı", "Misafir ID", "Misafir Mail", "Misafir Telefon No"};
+        this.col_reservation = new Object[]{"ID", "Oda ID", "Otel Adı", "Pansiyon Tipi", "Adres", "Giriş Tarihi", "Çıkış Tarihi", "Toplam Tutar", "Misafir Sayısı", "Misafir Adı", "Misafir ID", "Misafir Mail", "Misafir Telefon No"};
         if (reservationList == null) {
 
             reservationList = this.reservationManager.getForTable(col_reservation.length, this.reservationManager.findAll());
