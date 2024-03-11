@@ -167,6 +167,7 @@ public class EmployeeView extends Layout {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
+                LoginView loginView = new LoginView();
             }
         }); // Çıkış
         btn_search_room.addActionListener(new ActionListener() {

@@ -1,45 +1,40 @@
-# Patika Turizm Acente Sistemi
+# Patika Tourism Agency System
 
-Bu proje, Patika Turizm Acentesi'nin işlerini dijital ortamda yürütebilmesi için bir otel yönetim sistemi geliştirmeyi amaçlar. Bu sistem, acente çalışanlarının otel rezervasyonlarını, odaları yönetmelerini ve müşteri taleplerini karşılamalarını sağlayacak kullanıcı dostu bir arayüze sahiptir.
+This project aims to develop a hotel management system for Patika Tourism Agency to conduct its business digitally. The system provides a user-friendly interface for agency employees to manage hotel reservations, rooms, and fulfill customer requests.
+## Features
+- **User Management:** Admin can add, edit, delete, and view a list of agency employees.
+- **Hotel Management:** Enables the addition, editing, and listing of hotels. Also, records pension types and facility features associated with hotels.
+- **Season Management:** Hotel periods are added, and pricing is done based on these periods.
+- **Room Management:** Allows addition, editing, and listing of rooms associated with hotels. Different room types and features are recorded.
+- **Pricing:** Room prices are automatically calculated based on hotel periods, pension types, and the number of guests.
+- **Room Search and Reservation Operations:** Agency employees can search for rooms and make reservations according to customer requests.
 
-## Özellikler
+## Technical Requirements
+- **Database:** PostgreSQL is used.
+- **GUI:** A user-friendly interface is designed with Swing.
 
-- **Kullanıcı Yönetimi**: Admin, acente çalışanlarını ekleyebilir, düzenleyebilir, silebilir ve listelerini görüntüleyebilir.
-- **Otel Yönetimi**: Otellerin eklenmesi, düzenlenmesi ve listelenmesi sağlanır. Ayrıca otellere ait pansiyon tipleri ve tesis özellikleri kaydedilir.
-- **Dönem Yönetimi**: Otel dönemleri eklenir ve fiyatlandırmalar bu dönemlere göre yapılır.
-- **Oda Yönetimi**: Otellere ait odaların eklenmesi, düzenlenmesi ve listelenmesi sağlanır. Farklı oda tipleri ve özellikleri kaydedilir.
-- **Fiyatlandırma**: Oda fiyatları otel dönemlerine, pansiyon tiplerine ve misafir sayısına göre otomatik olarak hesaplanır.
-- **Oda Arama ve Rezervasyon İşlemleri**: Acente çalışanları, müşterilerin taleplerine göre odaları arayabilir ve rezervasyon işlemlerini gerçekleştirebilir.
+## Database Tables
+- **user:** Stores admin and agency employee user information.
+- **hotel:** Stores hotel information.
+- **season:** Stores period records associated with hotels.
+- **pension:** Stores pension types associated with hotels.
+- **room:** Stores room records associated with hotels.
+- **reservation:** Stores reservation records associated with rooms.
 
-## Teknik Gereksinimler
+## Installation
+1. Clone the project to your computer.
+2. Use the `HotelManagementSystemDatabase.sql` file found in the folder for the database.
+3. You can log in as an admin with the username `admin` and password `1234`.
+4. You can log in as an employee with the username `employee` and password `1234`.
+5. The overall operation can be found in the `EmployeeView` class.
+6. You can run the program by executing the `Main` class.
 
-- Veritabanı: PostgreSQL kullanılıyor.
-- GUI (Arayüz): Swing ile kullanıcı dostu bir arayüz tasarlanmıştır.
 
-## Veritabanı Tabloları
+## Contributions
+Contributions are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
-- `user`: Admin ve acente çalışanı kullanıcı bilgilerini tutar.
-- `otel`: Otel bilgilerini tutar.
-- `season`: Otele ait dönem kayıtlarını tutar.
-- `pension`: Otele ait pansiyon tiplerini tutar.
-- `room`: Otele ait oda kayıtlarını tutar.
-- `reservation`: Odaya ait rezervasyon kayıtlarını tutar.
+Enjoy! 👋🏼 
 
-## Kurulum
-
-1. Projeyi bilgisayarınıza klonlayın.
-2. Gerekli bağımlılıkları yüklemek için `npm install` komutunu çalıştırın.
-3. Veritabanını için klasörde bulunan `HotelManagementSystemDatabase.sql` dosyasını kullanabilirsiniz.
-4. Admin olarak giriş yapmak için `admin` kullanıcı adı ve `1234` şifresi ile giriş yapabilirsiniz. 
-5. Personel olarak giriş yapmak için `employee` kullanıcı adı ve `1234` şifresi ile giriş yapabilirsiniz.
-6. Operasyonun geneli `EmployeeView` sınıfı içerisinde bulunmaktadır.
-7. Programı çalıştırmak için `Main` sınıfını çalıştırabilirsiniz.
-8. Proje ile ilgili örnek ekran görüntülerine `src/zProje` Fotoğrafları klasörü içerisinden inceleyebilirsiniz.
-8. İyi eğlenceler! 👋🏼          ![img_2.png](img_2.png) 😄
-
-## Katkılar
-
-Kat Contributions are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
 
 

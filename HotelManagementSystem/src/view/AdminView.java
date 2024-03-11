@@ -76,6 +76,7 @@ public class AdminView extends Layout {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
+                LoginView loginView = new LoginView();
             }
         });
 
